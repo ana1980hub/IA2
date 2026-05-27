@@ -64,7 +64,7 @@ if st.button("Analizar póliza"):
 """
         try:
             modelo = genai.GenerativeModel(
-                model_name="gemini-1.5-flash",
+                model_name="gemini-2.0-flash",
                 system_instruction=system_prompt
             )
             with st.spinner("Analizando tu póliza..."):
