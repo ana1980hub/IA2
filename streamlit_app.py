@@ -10,7 +10,7 @@ co = cohere.Client(st.secrets["COHERE_API_KEY"])
 
 system_prompt = """Eres un asistente especializado en seguros. Analizás pólizas y respondés preguntas basándote exclusivamente en el texto proporcionado. Nunca inventás coberturas ni condiciones que no figuren en el documento. Si algo no está claro, lo indicás explícitamente. Usás siempre lenguaje simple, directo y sin tecnicismos innecesarios."""
 
-st.title("📄 LéeTuPóliza")
+st.title("LéeTuPóliza")
 st.caption("Entendé tu póliza de seguro en segundos, sin tecnicismos.")
 
 st.subheader("1. Cargá tu póliza")
@@ -74,10 +74,10 @@ if st.button("Analizar póliza"):
                 )
                 resultado = response.text
 
-            st.subheader("📋 Resultado del análisis")
+            st.subheader(" Resultado del análisis")
             st.markdown(resultado)
             st.divider()
-            st.caption("⚠️ LéeTuPóliza es una herramienta informativa. No almacena documentos ni datos del usuario. No reemplaza el asesoramiento de un profesional matriculado en seguros.")
+            st.caption(" LéeTuPóliza es una herramienta informativa. No almacena documentos ni datos del usuario. No reemplaza el asesoramiento de un profesional matriculado en seguros.")
 
         except Exception as e:
             st.error(f"Error al conectar con la IA: {e}")
