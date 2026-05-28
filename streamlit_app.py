@@ -18,7 +18,7 @@ if pregunta.strip():
 {texto_poliza[:8000]}
 
 Respondé únicamente esta pregunta basándote en el texto de la póliza: {pregunta}
-No hagas resúmenes ni análisis adicionales. Solo respondé lo que se pregunta."""
+No hagas resúmenes ni análisis adicionales. Solo respondé lo que se pregunta.
 else:
     prompt_usuario = f"""Texto de la póliza:
 
