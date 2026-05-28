@@ -4,7 +4,7 @@ from docx import Document
 import cohere
 import io
 
-st.set_page_config(page_title="LéeTuPóliza", page_icon="📄", layout="centered")
+st.set_page_config(page_title="LéeTuPóliza", page_icon="", layout="centered")
 
 co = cohere.Client(st.secrets["COHERE_API_KEY"])
 
@@ -32,14 +32,12 @@ if modo == "Subir archivo (PDF o Word)":
         elif archivo.name.endswith(".docx"):
             doc = Document(io.BytesIO(archivo.read()))
             texto_poliza = "\n".join(p.text for p in doc.paragraphs)
-
         if texto_poliza.strip():
-            st.success(f"Archivo cargado correctamente. ({len(texto_poliza)} caracteres extraídos)")
-            with st.expander("Ver texto extraído (para verificar)"):
-                st.text(texto_poliza[:2000])
+            st.success("Archivo cargado correctamente.")
         else:
             st.warning("No se pudo extraer texto. El archivo puede estar escaneado. Probá pegando el texto manualmente.")
-else:
+       
+    else:
     texto_poliza = st.text_area("Pegá el texto de tu póliza aquí:", height=250)
 
 st.subheader("2. ¿Qué querés saber?")
