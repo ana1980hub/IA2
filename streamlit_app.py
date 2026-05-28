@@ -1,14 +1,14 @@
 import streamlit as st
 import pdfplumber
 from docx import Document
-import google.generativeai as genai
+import cohere
 import io
 
 # --- Configuración de página ---
 st.set_page_config(page_title="LéeTuPóliza", page_icon="📄", layout="centered")
 
-# --- Configuración de Gemini ---
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+# --- Cliente Cohere ---
+co = cohere.Client(st.secrets["COHERE_API_KEY"])
 
 system_prompt = """Eres un asistente especializado en seguros. Tu función es analizar pólizas de seguro y explicarlas en lenguaje claro y accesible para personas sin conocimientos técnicos.
 
@@ -63,12 +63,12 @@ if st.button("Analizar póliza"):
 {"Pregunta del usuario: " + pregunta if pregunta.strip() else "Realizá un análisis general de la póliza siguiendo las instrucciones."}
 """
         try:
-            modelo = genai.GenerativeModel(
-                model_name="gemini-2.0-flash",
-                system_instruction=system_prompt
-            )
             with st.spinner("Analizando tu póliza..."):
-                response = modelo.generate_content(prompt_usuario)
+                response = co.chat(
+                    model="command-r-plus",
+                    preamble=system_prompt,
+                    message=prompt_usuario
+                )
                 resultado = response.text
 
             st.subheader("📋 Resultado del análisis")
