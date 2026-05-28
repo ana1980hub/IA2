@@ -20,14 +20,20 @@ texto_poliza = ""
 
 if modo == "Subir archivo (PDF o Word)":
     archivo = st.file_uploader("Subí tu póliza", type=["pdf", "docx"])
-    if archivo:
+    if archivo is not None:
         if archivo.name.endswith(".pdf"):
             with pdfplumber.open(archivo) as pdf:
-                texto_poliza = "\n".join(p.extract_text() or "" for p in pdf.pages)
+                paginas = []
+                for p in pdf.pages:
+                    texto_pagina = p.extract_text()
+                    if texto_pagina:
+                        paginas.append(texto_pagina)
+                texto_poliza = "\n".join(paginas)
         elif archivo.name.endswith(".docx"):
             doc = Document(io.BytesIO(archivo.read()))
             texto_poliza = "\n".join(p.text for p in doc.paragraphs)
-            if texto_poliza.strip():
+
+        if texto_poliza.strip():
             st.success(f"Archivo cargado correctamente. ({len(texto_poliza)} caracteres extraídos)")
             with st.expander("Ver texto extraído (para verificar)"):
                 st.text(texto_poliza[:2000])
