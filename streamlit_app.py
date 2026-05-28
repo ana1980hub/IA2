@@ -27,8 +27,10 @@ if modo == "Subir archivo (PDF o Word)":
         elif archivo.name.endswith(".docx"):
             doc = Document(io.BytesIO(archivo.read()))
             texto_poliza = "\n".join(p.text for p in doc.paragraphs)
-        if texto_poliza.strip():
-            st.success("Archivo cargado correctamente.")
+       if texto_poliza.strip():
+            st.success(f"Archivo cargado correctamente. ({len(texto_poliza)} caracteres extraídos)")
+            with st.expander("Ver texto extraído (para verificar)"):
+                st.text(texto_poliza[:2000])
         else:
             st.warning("No se pudo extraer texto. El archivo puede estar escaneado. Probá pegando el texto manualmente.")
 else:
