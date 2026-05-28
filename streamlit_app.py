@@ -4,38 +4,15 @@ from docx import Document
 import cohere
 import io
 
-# --- Configuración de página ---
 st.set_page_config(page_title="LéeTuPóliza", page_icon="📄", layout="centered")
 
-# --- Cliente Cohere ---
 co = cohere.Client(st.secrets["COHERE_API_KEY"])
 
 system_prompt = """Eres un asistente especializado en seguros. Analizás pólizas y respondés preguntas basándote exclusivamente en el texto proporcionado. Nunca inventás coberturas ni condiciones que no figuren en el documento. Si algo no está claro, lo indicás explícitamente. Usás siempre lenguaje simple, directo y sin tecnicismos innecesarios."""
 
-if pregunta.strip():
-    prompt_usuario = f"""Texto de la póliza:
-
-{texto_poliza[:8000]}
-
-Respondé únicamente esta pregunta basándote en el texto de la póliza: {pregunta}
-No hagas resúmenes ni análisis adicionales. Solo respondé lo que se pregunta.
-else:
-    prompt_usuario = f"""Texto de la póliza:
-
-{texto_poliza[:8000]}
-
-Realizá un análisis general con:
-1. Resumen de 5 puntos clave (qué cubre y qué no cubre).
-2. Glosario de términos técnicos explicados en lenguaje simple.
-3. Exclusiones, franquicias y límites de cobertura más importantes."""
-
-IMPORTANTE: No inventes coberturas ni condiciones que no figuren en el texto. Si algo no está claro en el documento, indícalo explícitamente. Usa siempre un lenguaje simple, directo y sin tecnicismos innecesarios."""
-
-# --- UI ---
 st.title("📄 LéeTuPóliza")
 st.caption("Entendé tu póliza de seguro en segundos, sin tecnicismos.")
 
-# --- Ingreso del texto ---
 st.subheader("1. Cargá tu póliza")
 modo = st.radio("¿Cómo querés ingresar el texto?", ["Subir archivo (PDF o Word)", "Pegar texto manualmente"])
 
@@ -57,21 +34,31 @@ if modo == "Subir archivo (PDF o Word)":
 else:
     texto_poliza = st.text_area("Pegá el texto de tu póliza aquí:", height=250)
 
-# --- Pregunta del usuario ---
 st.subheader("2. ¿Qué querés saber?")
 pregunta = st.text_input("Escribí tu pregunta (o dejá vacío para un análisis general):")
 
-# --- Botón de análisis ---
 if st.button("Analizar póliza"):
     if not texto_poliza.strip():
         st.warning("Primero cargá o pegá el texto de tu póliza.")
     else:
-        prompt_usuario = f"""Aquí está el texto de una póliza de seguro:
+        if pregunta.strip():
+            prompt_usuario = (
+                "Texto de la poliza:\n\n"
+                + texto_poliza[:8000]
+                + "\n\nRespondé únicamente esta pregunta basándote en el texto de la póliza: "
+                + pregunta
+                + "\nNo hagas resúmenes ni análisis adicionales. Solo respondé lo que se pregunta."
+            )
+        else:
+            prompt_usuario = (
+                "Texto de la poliza:\n\n"
+                + texto_poliza[:8000]
+                + "\n\nRealizá un análisis general con:\n"
+                + "1. Resumen de 5 puntos clave (qué cubre y qué no cubre).\n"
+                + "2. Glosario de términos técnicos explicados en lenguaje simple.\n"
+                + "3. Exclusiones, franquicias y límites de cobertura más importantes."
+            )
 
-{texto_poliza[:8000]}
-
-{"Pregunta del usuario: " + pregunta if pregunta.strip() else "Realizá un análisis general de la póliza siguiendo las instrucciones."}
-"""
         try:
             with st.spinner("Analizando tu póliza..."):
                 response = co.chat(
