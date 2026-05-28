@@ -5,7 +5,7 @@ import cohere
 import io
 
 # ─── Configuración de página ───────────────────────────────────────────────────
-st.set_page_config(page_title="LéeTuPóliza", page_icon="📄", layout="centered")
+st.set_page_config(page_title="LéeTuPóliza", page_icon="📄", layout="wide")
 
 # ─── Cliente Cohere ────────────────────────────────────────────────────────────
 co = cohere.Client(st.secrets["COHERE_API_KEY"])
@@ -27,7 +27,7 @@ def extraer_texto_docx(archivo):
     return "\n".join(p.text for p in doc.paragraphs)
 
 def construir_prompt(texto_poliza, pregunta):
-    """Construye el prompt según si hay pregunta específica o se pide análisis general."""
+    """Construye el prompt según si hay pregunta específica o análisis general."""
     base = "Texto de la poliza:\n\n" + texto_poliza[:8000] + "\n\n"
     if pregunta.strip():
         return (
@@ -54,35 +54,35 @@ def analizar_con_ia(prompt_usuario):
     )
     return response.text
 
-# ─── Interfaz principal ────────────────────────────────────────────────────────
+# ─── Sidebar: Cómo funciona ────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("## ℹ️ Información")
+    st.markdown("### ¿Cómo funciona?")
+    st.markdown("**LéeTuPóliza** usa Inteligencia Artificial para analizar tu póliza de seguro y explicarla en lenguaje simple.")
+    st.markdown("""
+1. **Cargá tu póliza**: subí un PDF digital o Word, o pegá el texto directamente.
+2. **Hacé una pregunta** *(opcional)*: por ejemplo, *¿Qué cubre en caso de robo?*
+3. **Hacé clic en "Analizar póliza"**: la IA procesa el documento y te responde.
+""")
+    st.markdown("### ¿Qué obtenés?")
+    st.markdown("""
+- **Sin pregunta**: análisis completo con coberturas, glosario y exclusiones.
+- **Con pregunta**: respuesta puntual basada en tu póliza.
+""")
+    st.markdown("### Limitaciones")
+    st.markdown("""
+- Solo funciona con PDFs digitales (no escaneados).
+- Responde únicamente sobre lo que dice el documento.
+""")
+    st.divider()
+    st.caption("⚠️ Herramienta informativa. No reemplaza el asesoramiento de un profesional matriculado en seguros.")
 
-# Título y descripción
+# ─── Área principal ────────────────────────────────────────────────────────────
 st.title("📄 LéeTuPóliza")
 st.caption("Entendé tu póliza de seguro en segundos, sin tecnicismos.")
-
-# Sección: Cómo funciona
-with st.expander(" ¿Cómo funciona LéeTuPóliza?"):
-    st.markdown("""
-**LéeTuPóliza** usa Inteligencia Artificial para analizar pólizas de seguro y explicarlas en lenguaje simple.
-
-**¿Cómo usarla?**
-1. **Cargá tu póliza** — subí un archivo PDF digital o Word (.docx), o pegá el texto directamente.
-2. **Hacé una pregunta** *(opcional)* — por ejemplo: *¿Qué cubre en caso de robo?* o *¿Qué pasa si no pago la cuota?*
-3. **Hacé clic en "Analizar póliza"** — la IA procesa el documento y te responde.
-
-**¿Qué podés esperar como resultado?**
-- Si **no hacés ninguna pregunta**: recibís un análisis completo con resumen de coberturas, glosario de términos técnicos y alertas de exclusiones.
-- Si **hacés una pregunta específica**: recibís solo la respuesta a esa pregunta, basada en el texto de tu póliza.
-
-**Limitaciones a tener en cuenta:**
-- Solo funciona con PDFs digitales (no escaneados).
-- Responde únicamente sobre lo que dice el documento — no inventa coberturas.
-- No reemplaza el asesoramiento de un profesional en seguros.
-    """)
-
 st.divider()
 
-# Sección 1: Ingreso de la póliza
+# ─── Sección 1: Ingreso de la póliza ──────────────────────────────────────────
 st.subheader("1. Cargá tu póliza")
 modo = st.radio("¿Cómo querés ingresar el texto?", ["Subir archivo (PDF o Word)", "Pegar texto manualmente"])
 
@@ -103,11 +103,11 @@ if modo == "Subir archivo (PDF o Word)":
 else:
     texto_poliza = st.text_area("Pegá el texto de tu póliza aquí:", height=250)
 
-# Sección 2: Pregunta del usuario
+# ─── Sección 2: Pregunta del usuario ──────────────────────────────────────────
 st.subheader("2. ¿Qué querés saber?")
 pregunta = st.text_input("Escribí tu pregunta (o dejá vacío para un análisis general):")
 
-# Botón de acción
+# ─── Botón de acción ───────────────────────────────────────────────────────────
 if st.button("🔍 Analizar póliza"):
     if not texto_poliza.strip():
         st.warning("Primero cargá o pegá el texto de tu póliza.")
@@ -117,10 +117,9 @@ if st.button("🔍 Analizar póliza"):
             with st.spinner("Analizando tu póliza..."):
                 resultado = analizar_con_ia(prompt_usuario)
 
+            st.divider()
             st.subheader("📋 Resultado del análisis")
             st.markdown(resultado)
-            st.divider()
-            st.caption("⚠️ LéeTuPóliza es una herramienta informativa. No almacena documentos ni datos del usuario. No reemplaza el asesoramiento de un profesional matriculado en seguros.")
 
         except Exception as e:
             st.error(f"Error al conectar con la IA: {e}")
