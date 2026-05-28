@@ -38,7 +38,7 @@ if modo == "Subir archivo (PDF o Word)":
             st.warning("No se pudo extraer texto. El archivo puede estar escaneado. Probá pegando el texto manualmente.")
        
     else:
-    texto_poliza = st.text_area("Pegá el texto de tu póliza aquí:", height=250)
+        texto_poliza = st.text_area("Pegá el texto de tu póliza aquí:", height=250)
 
 st.subheader("2. ¿Qué querés saber?")
 pregunta = st.text_input("Escribí tu pregunta (o dejá vacío para un análisis general):")
