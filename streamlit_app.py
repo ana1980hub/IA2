@@ -65,7 +65,7 @@ if st.button("Analizar póliza"):
         try:
             with st.spinner("Analizando tu póliza..."):
                 response = co.chat(
-                    model="command-r-plus",
+                    model="command-a-03-2025",
                     preamble=system_prompt,
                     message=prompt_usuario
                 )
