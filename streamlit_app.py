@@ -10,14 +10,24 @@ st.set_page_config(page_title="LéeTuPóliza", page_icon="📄", layout="centere
 # --- Cliente Cohere ---
 co = cohere.Client(st.secrets["COHERE_API_KEY"])
 
-system_prompt = """Eres un asistente especializado en seguros. Tu función es analizar pólizas de seguro y explicarlas en lenguaje claro y accesible para personas sin conocimientos técnicos.
+system_prompt = """Eres un asistente especializado en seguros. Analizás pólizas y respondés preguntas basándote exclusivamente en el texto proporcionado. Nunca inventás coberturas ni condiciones que no figuren en el documento. Si algo no está claro, lo indicás explícitamente. Usás siempre lenguaje simple, directo y sin tecnicismos innecesarios."""
 
-Cuando el usuario te proporcione el texto de una póliza:
-1. Genera un resumen de no más de 5 puntos clave que indiquen QUÉ CUBRE y QUÉ NO CUBRE la póliza.
-2. Identifica y explica en lenguaje simple los términos técnicos o legales presentes.
-3. Destaca las exclusiones, franquicias y límites de cobertura más importantes.
-4. Responde solo con información que esté explícitamente en el texto proporcionado.
-5. Si el usuario hace preguntas, respóndelas basándote exclusivamente en el documento cargado.
+if pregunta.strip():
+    prompt_usuario = f"""Texto de la póliza:
+
+{texto_poliza[:8000]}
+
+Respondé únicamente esta pregunta basándote en el texto de la póliza: {pregunta}
+No hagas resúmenes ni análisis adicionales. Solo respondé lo que se pregunta."""
+else:
+    prompt_usuario = f"""Texto de la póliza:
+
+{texto_poliza[:8000]}
+
+Realizá un análisis general con:
+1. Resumen de 5 puntos clave (qué cubre y qué no cubre).
+2. Glosario de términos técnicos explicados en lenguaje simple.
+3. Exclusiones, franquicias y límites de cobertura más importantes."""
 
 IMPORTANTE: No inventes coberturas ni condiciones que no figuren en el texto. Si algo no está claro en el documento, indícalo explícitamente. Usa siempre un lenguaje simple, directo y sin tecnicismos innecesarios."""
 
